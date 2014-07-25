@@ -66,6 +66,7 @@ void loop() {
   Point p = ts.getPoint();
   if (p.z > 20) {
     drawNewWord();
+    delay(50);
   }
 }
 
