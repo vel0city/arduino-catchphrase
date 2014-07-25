@@ -1,0 +1,4 @@
+#### printString notes
+characters are 10px wide with a 1px border (11px total width)
+characters are 14px tall + 2px tail
+characters start +2px from the given x-pos on the drawString method
