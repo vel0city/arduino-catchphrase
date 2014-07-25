@@ -34,6 +34,8 @@ const int PIN_SD_CS = 4;                        // pin of sd card
 File textFile;
 String currentWord;
 
+TouchScreen ts = TouchScreen(XP, YP, XM, YM);
+
 void setup() {
   pinMode(PIN_SD_CS,OUTPUT);
   digitalWrite(PIN_SD_CS,HIGH);
@@ -60,15 +62,17 @@ void setup() {
 void loop() {
   // Get a point and see if anyone touched the screen
   Point p = ts.getPoint();
-  if (p.z > __PRESSURE) {
+  if (p.z > 20) {
     // Someone touched! Get a new word, clear the screen, and draw the new one!
     currentWord = getWord();
+    char* drawWord;
+    currentWord.toCharArray(drawWord, currentWord.length());
     Tft.drawRectangle(10,110,200,60,BLACK);
-    Tft.drawString(currentWord,20,110,3,WHITE);
+    Tft.drawString(drawWord,20,110,3,WHITE);
   }
 }
 
-char[] getWord(void) {
+String getWord(void) {
   textFile = SD.open("NAMES.txt");
   
   // Go to a random spot in the file
@@ -76,14 +80,14 @@ char[] getWord(void) {
   char value = ' ';
   
   // Keep reading until you hit a newline or the end of the 
-  while(value != "\n" && textFile.available()) {
+  while(&value != "\n" && textFile.available()) {
     value = textFile.read();
   }
   
   // Read in the whole line as the word
   String newWord;
   int i = 0;
-  while(value != "\n" && i < 20 && textFile.available())
+  while(&value != "\n" && i < 20 && textFile.available())
   {
     value = textFile.read();
     newWord.concat(value);
