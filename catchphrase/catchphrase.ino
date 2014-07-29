@@ -1,7 +1,9 @@
 #include <SD.h>
 #include <SPI.h>
 #include <TFTv2.h>
+#include <MemoryFree.h>
 #include <SeeedTouchScreen.h>
+#include "categoryMenu.h"
 
 // Boilerplate touchscreen defs
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) // mega
@@ -32,6 +34,7 @@
 const int PIN_SD_CS = 4;   // pin of sd card
 File textFile;
 String currentWord;
+CategoryMenu category;
 
 TouchScreen ts = TouchScreen(XP, YP, XM, YM);
 
@@ -40,9 +43,10 @@ void setup() {
   Serial.begin(9600);
 
   // Init SD Card
-  pinMode(PIN_SD_CS,OUTPUT);
-  digitalWrite(PIN_SD_CS,HIGH);
+  pinMode(53,OUTPUT);
+  digitalWrite(10,HIGH);
   Sd2Card card;
+  
   card.init(SPI_FULL_SPEED, PIN_SD_CS);
 
   if(!SD.begin(PIN_SD_CS))              
@@ -51,6 +55,8 @@ void setup() {
     while(1);       // init fail, die here
   }
   Serial.println("SD OK!");
+  
+  //category = CategoryMenu();
 
   // For better random number generator,
   // seed noise from unconnected pin
@@ -65,8 +71,11 @@ void loop() {
   // Get a point and see if anyone touched the screen
   Point p = ts.getPoint();
   if (p.z > 20) {
+    Serial.print("freeMemory()=");
+    Serial.println(freeMemory());
     drawNewWord();
     delay(50);
+    
   }
 }
 
@@ -108,6 +117,7 @@ String getWord(void) {
         hitEOF = false;
         break;
       }
+      // 
       textFile.close();
     }
   }
